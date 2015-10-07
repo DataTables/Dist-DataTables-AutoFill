@@ -1,0 +1,10 @@
+{
+    "css": [],
+    "js": [
+        "js/dataTables.autoFill.js",
+        "js/dataTables.autoFill.min.js"
+    ],
+    "src-repo": "http://github.com/DataTables/AutoFill",
+    "last-sync": "f5398ba535d57898738657882a8ddd961526c749",
+    "last-tag": "2.0.0"
+}
