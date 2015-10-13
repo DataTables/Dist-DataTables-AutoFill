@@ -1,11 +1,11 @@
-/*! AutoFill 2.0.0
+/*! AutoFill 2.1.0-dev
  * ©2008-2015 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     AutoFill
  * @description Add Excel like click and drag auto-fill options to DataTables
- * @version     2.0.0
+ * @version     2.1.0-dev
  * @file        dataTables.autoFill.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
@@ -20,11 +20,28 @@
  *
  * For details please refer to: http://www.datatables.net
  */
+(function( factory ){
+	if ( typeof define === 'function' && define.amd ) {
+		// AMD
+		define( ['jquery', 'datatables.net'], factory );
+	}
+	else if ( typeof exports === 'object' ) {
+		// Node / CommonJS
+		module.exports = function ($) {
+			if ( ! $ ) { $ = require('jquery'); }
+			if ( ! $.fn.dataTable ) { require('datatables.net')($); }
 
-(function( window, document, undefined ) {
+			factory( $ );
+		};
+	}
+	else {
+		// Browser
+		factory( jQuery );
+	}
+}(function( $ ) {
+'use strict';
+var DataTable = $.fn.dataTable;
 
-var factory = function( $, DataTable ) {
-"use strict";
 
 var _instance = 0;
 
@@ -63,7 +80,12 @@ var AutoFill = function( dt, opts )
 		scroll: {},
 
 		/** @type {integer} Interval object used for smooth scrolling */
-		scrollInterval: null
+		scrollInterval: null,
+
+		handle: {
+			height: 0,
+			width: 0
+		}
 	};
 
 
@@ -93,7 +115,10 @@ var AutoFill = function( dt, opts )
 		list: $('<div class="dt-autofill-list">'+this.s.dt.i18n('autoFill.info', '')+'<ul/></div>'),
 
 		/** @type {jQuery} DataTables scrolling container */
-		dtScroll: null
+		dtScroll: null,
+
+		/** @type {jQuery} Offset parent element */
+		offsetParent: null
 	};
 
 
@@ -103,7 +128,7 @@ var AutoFill = function( dt, opts )
 
 
 
-AutoFill.prototype = {
+$.extend( AutoFill.prototype, {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 * Constructor
 	 */
@@ -158,14 +183,35 @@ AutoFill.prototype = {
 	{
 		var dt = this.s.dt;
 		var idx = dt.cell( node ).index();
+		var handle = this.dom.handle;
+		var handleDim = this.s.handle;
 
 		if ( ! idx || dt.columns( this.c.columns ).indexes().indexOf( idx.column ) === -1 ) {
 			this._detach();
 			return;
 		}
 
+		if ( ! this.dom.offsetParent ) {
+			this.dom.offsetParent = $(node).offsetParent();
+		}
+
+		if ( ! handleDim.height || ! handleDim.width ) {
+			// Append to document so we can get its size. Not expecting it to
+			// change during the life time of the page
+			handle.appendTo( 'body' );
+			handleDim.height = handle.outerHeight();
+			handleDim.width = handle.outerWidth();
+		}
+
+		var offset = $(node).position();
+
 		this.dom.attachedTo = node;
-		this.dom.handle.appendTo( node );
+		handle
+			.css( {
+				top: offset.top + node.offsetHeight - handleDim.height,
+				left: offset.left + node.offsetWidth - handleDim.width
+			} )
+			.appendTo( this.dom.offsetParent );
 	},
 
 
@@ -343,6 +389,7 @@ AutoFill.prototype = {
 		// Build the object structure for Editor's multi-row editing
 		var idValues = {};
 		var nodes = [];
+		var fields = editor.fields();
 
 		for ( var i=0, ien=cells.length ; i<ien ; i++ ) {
 			for ( var j=0, jen=cells[i].length ; j<jen ; j++ ) {
@@ -350,21 +397,35 @@ AutoFill.prototype = {
 
 				// Determine the field name for the cell being edited
 				var col = dt.settings()[0].aoColumns[ cell.index.column ];
-				var dataSrc = col.editField !== undefined ?
-					col.editField :
-					col.mData;
+				var fieldName = col.editField;
 
-				if ( ! dataSrc ) {
-					throw 'Could not automatically determine field name. '+
+				if ( fieldName === undefined ) {
+					var dataSrc = col.mData;
+
+					// dataSrc is the `field.data` property, but we need to set
+					// using the field name, so we need to translate from the
+					// data to the name
+					for ( var k=0, ken=fields.length ; k<ken ; k++ ) {
+						var field = editor.field( fields[k] );
+
+						if ( field.dataSrc() === dataSrc ) {
+							fieldName = field.name();
+							break;
+						}
+					}
+				}
+
+				if ( ! fieldName ) {
+					throw 'Could not automatically determine field data. '+
 						'Please see https://datatables.net/tn/11';
 				}
 
-				if ( ! idValues[ dataSrc ] ) {
-					idValues[ dataSrc ] = {};
+				if ( ! idValues[ fieldName ] ) {
+					idValues[ fieldName ] = {};
 				}
 
 				var id = dt.row( cell.index.row ).id();
-				idValues[ dataSrc ][ id ] = cell.set;
+				idValues[ fieldName ][ id ] = cell.set;
 
 				// Keep a list of cells so we can activate the bubble editing
 				// with them
@@ -441,6 +502,10 @@ AutoFill.prototype = {
 					that._attach( this );
 				} )
 				.on( 'mouseleave'+namespace, function (e) {
+					if ( $(e.relatedTarget).hasClass('dt-autofill-handle') ) {
+						return;
+					}
+
 					that._detach();
 				} );
 		}
@@ -756,7 +821,7 @@ AutoFill.prototype = {
 
 		this._emitEvent( 'autoFill', [ dt, cells ] );
 	}
-};
+} );
 
 
 /**
@@ -875,7 +940,7 @@ AutoFill.actions = {
  * @static
  * @type      String
  */
-AutoFill.version = '2.0.0';
+AutoFill.version = '2.1.0-dev';
 
 
 /**
@@ -938,22 +1003,4 @@ DataTable.AutoFill = AutoFill;
 
 
 return AutoFill;
-};
-
-
-// Define as an AMD module if possible
-if ( typeof define === 'function' && define.amd ) {
-	define( ['jquery', 'datatables'], factory );
-}
-else if ( typeof exports === 'object' ) {
-    // Node/CommonJS
-    factory( require('jquery'), require('datatables') );
-}
-else if ( jQuery && !jQuery.fn.dataTable.AutoFill ) {
-	// Otherwise simply initialise as normal, stopping multiple evaluation
-	factory( jQuery, jQuery.fn.dataTable );
-}
-
-
-}(window, document));
-
+}));
