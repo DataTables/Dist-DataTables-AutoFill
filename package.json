@@ -1,6 +1,6 @@
 {
     "name": "datatables.net-autofill",
-    "version": "2.1.3",
+    "version": "2.2.0",
     "description": "AutoFill for DataTables ",
     "files": [
         "js/dataTables.autoFill.js"
