@@ -3,7 +3,7 @@
     "version": "2.2.1",
     "description": "AutoFill for DataTables ",
     "files": [
-        "js/dataTables.autoFill.js"
+        "js/**/*.js"
     ],
     "main": "./js/dataTables.autoFill.js",
     "keywords": [
