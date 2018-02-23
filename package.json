@@ -5,7 +5,7 @@
     "files": [
         "js/**/*.js"
     ],
-    "main": "./js/dataTables.autoFill.js",
+    "main": "js/dataTables.autoFill.js",
     "keywords": [
         "autofill",
         "excel",
