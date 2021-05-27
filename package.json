@@ -1,36 +1,43 @@
 {
     "name": "datatables.net-autofill",
+    "description": "AutoFill for DataTables",
+    "main": "js/dataTables.autoFill.js",
     "version": "2.3.6",
-    "description": "AutoFill for DataTables ",
     "files": [
         "js/**/*.js"
     ],
-    "main": "js/dataTables.autoFill.js",
-    "type": "types.d.ts",
     "keywords": [
-        "autofill",
-        "excel",
-        "DataTables",
+        "AutoFill",
+ "Excel",
+        "Datatables",
         "jQuery",
         "table",
-        "DataTables"
+        "filter",
+        "sort"
     ],
-    "homepage": "https://datatables.net",
-    "bugs": "https://datatables.net/forums",
-    "license": "MIT",
+    "dependencies": {
+        "datatables.net": ">=1.10.24",
+        "jquery": ">=1.7"
+    },
+    "moduleType": [
+        "globals",
+        "amd",
+        "node"
+    ],
+    "ignore": [
+        "composer.json",
+        "datatables.json",
+        "package.json"
+    ],
     "author": {
         "name": "SpryMedia Ltd",
         "url": "http://datatables.net"
     },
-    "dependencies": {
-        "jquery": ">=1.7",
-        "datatables.net": "^1.10.15"
-    },
+    "homepage": "https://datatables.net",
+    "bugs": "https://datatables.net/forums",
+    "license": "MIT",
     "repository": {
         "type": "git",
         "url": "https://github.com/DataTables/Dist-DataTables-AutoFill.git"
-    },
-    "devDependencies": {
-        "@types/jquery": "^3.5.1"
     }
 }
