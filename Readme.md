@@ -17,9 +17,15 @@ For inclusion of this library using a standard `<script>` tag, rather than using
 npm install datatables.net-autofill
 ```
 
+ES3 Syntax
 ```
 var $ = require( 'jquery' );
 require( 'datatables.net-autofill' )( window, $ );
+```
+
+ES6 Syntax
+```
+import 'datatables.net-autofill'
 ```
 
 ### bower
