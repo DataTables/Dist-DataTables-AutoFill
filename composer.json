@@ -1,5 +1,5 @@
 {
-    "version": "2.3.6",
+    "version": "2.3.7",
     "name": "datatables.net/datatables.net-autofill",
     "description": "AutoFill adds an Excel like data fill option to DataTables, allowing click and drag over cells, filling in information and incrementing numbers as needed. This is AutoFill for DataTables",
     "support": {
