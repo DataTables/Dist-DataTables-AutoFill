@@ -106,6 +106,8 @@ var AutoFill = function( dt, opts )
 	 * @namespace Common and useful DOM elements for the class instance
 	 */
 	this.dom = {
+		closeButton: $('<div class="dtaf-popover-close">x</div>'),
+
 		/** @type {jQuery} AutoFill handle */
 		handle: $('<div class="dt-autofill-handle"/>'),
 
@@ -337,19 +339,16 @@ $.extend( AutoFill.prototype, {
 							actions[ name ].option( dt, cells )+
 						'<div>'
 					)
-					.append( $('<div class="dt-autofill-button">' )
-						.append( $('<button class="'+AutoFill.classes.btn+'">'+dt.i18n('autoFill.button', '&gt;')+'</button>')
-							.on( 'click', function () {
-								var result = actions[ name ].execute(
-									dt, cells, $(this).closest('li')
-								);
-								that._update( result, cells );
+					.append( $('<div class="dt-autofill-button">' ).append( $('<button class="'+AutoFill.classes.btn+'">'+dt.i18n('autoFill.button', '&gt;')+'</button>')))
+					.on( 'click', function () {
+						var result = actions[ name ].execute(
+							dt, cells, $(this).closest('li')
+						);
+						that._update( result, cells );
 
-								that.dom.background.remove();
-								that.dom.list.remove();
-							} )
-						)
-					)
+						that.dom.background.remove();
+						that.dom.list.remove();
+					} )
 				);
 			} );
 
@@ -359,6 +358,11 @@ $.extend( AutoFill.prototype, {
 				this.dom.list.remove();
 			})
 			this.dom.list.appendTo( 'body' );
+
+			if (this.c.closeButton) {
+				this.dom.list.prepend(this.dom.closeButton).addClass(AutoFill.classes.closeable)
+				this.dom.closeButton.on('click', () => this.dom.background.click())
+			}
 
 			this.dom.list.css( 'margin-top', this.dom.list.outerHeight()/2 * -1 );
 		}
@@ -1155,6 +1159,8 @@ AutoFill.defaults = {
 	/** @type {Boolean} Ask user what they want to do, even for a single option */
 	alwaysAsk: false,
 
+	closeButton: true,
+
 	/** @type {string|null} What will trigger a focus */
 	focus: null, // focus, click, hover
 
@@ -1185,7 +1191,9 @@ AutoFill.defaults = {
  */
 AutoFill.classes = {
 	/** @type {String} Class used by the selection button */
-	btn: 'btn'
+	btn: 'btn',
+
+	closeable: 'dtaf-popover-closeable'
 };
 
 
