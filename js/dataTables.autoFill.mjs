@@ -1,11 +1,17 @@
-/*! AutoFill 2.4.0
+
+/*! AutoFill 2.4.1-dev
  * ©2008-2022 SpryMedia Ltd - datatables.net/license
  */
+
+import $ from 'jquery';
+import DataTable from 'datatables.net';
+
+
 
 /**
  * @summary     AutoFill
  * @description Add Excel like click and drag auto-fill options to DataTables
- * @version     2.4.0
+ * @version     2.4.1-dev
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @copyright   SpryMedia Ltd.
  *
@@ -18,9 +24,6 @@
  *
  * For details please refer to: http://www.datatables.net
  */
-
-import $ from 'jquery';
-import DataTable from 'datatables.net';
 
 var _instance = 0;
 
@@ -1080,7 +1083,7 @@ AutoFill.actions = {
 
 	fillVertical: {
 		available: function ( dt, cells ) {
-			return cells.length > 1;
+			return cells.length > 1 && cells[0].length > 1;
 		},
 
 		option: function ( dt, cells ) {
@@ -1121,7 +1124,7 @@ AutoFill.actions = {
  * @static
  * @type      String
  */
-AutoFill.version = '2.4.0';
+AutoFill.version = '2.4.1-dev';
 
 
 /**
@@ -1230,4 +1233,5 @@ $(document).on( 'preInit.dt.autofill', function (e, settings, json) {
 DataTable.AutoFill = AutoFill;
 DataTable.AutoFill = AutoFill;
 
-export default AutoFill;
+
+export default DataTable;
