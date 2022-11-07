@@ -10,6 +10,6 @@
         "types/types.d.ts"
     ],
     "src-repo": "http://github.com/DataTables/AutoFill",
-    "last-tag": "2.4.0",
+    "last-tag": "2.5.0",
     "last-sync": "5865e6dd61c8e3d1f29c3da3eed7242c58917836"
 }
