@@ -43,7 +43,7 @@
 		// Browser
 		factory( jQuery, window, document );
 	}
-}(function( $, window, document, undefined ) {
+}(function( $, window, document ) {
 'use strict';
 var DataTable = $.fn.dataTable;
 
@@ -548,7 +548,11 @@ $.extend( AutoFill.prototype, {
 		editor
 			.bubble( nodes, false )
 			.multiSet( idValues )
-			.submit();
+			.submit(null, function () {
+				// If an error happens, Editor will show an alert, and then we need
+				// to finish the edit since we can't do anything else.
+				editor.close();
+			});
 	},
 
 
