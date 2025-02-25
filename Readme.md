@@ -27,7 +27,7 @@ import DataTable from 'datatables.net';
 import 'datatables.net-autofill'
 
 new DataTable('#myTable', {
-    // initalisation options
+    // initialisation options
 });
 ```
 
