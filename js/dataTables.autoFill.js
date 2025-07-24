@@ -244,7 +244,9 @@ $.extend( AutoFill.prototype, {
 	{
 		var that = this;
 		var dt = this.s.dt;
-		var dtScroll = $('div.dataTables_scrollBody', this.s.dt.table().container());
+
+		// Selectors for DataTables 1 and 2 - only one will be matched
+		var dtScroll = $('div.dataTables_scrollBody, div.dt-scroll-body', this.s.dt.table().container());
 
 		// Make the instance accessible to the API
 		dt.settings()[0].autoFill = this;
