@@ -117,6 +117,9 @@ declare class AutoFill {
      * and detach the AutoFill handle in the document.
      */
     private _focusListener;
+    /**
+     * Clean up the event listeners
+     */
     private _focusListenerRemove;
     /**
      * Get the position of a node, relative to another, including any scrolling

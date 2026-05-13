@@ -18,6 +18,7 @@ class AutoFill {
     }
     enable(flag = true) {
         let that = this;
+        let namespace = this.s.namespace;
         if (flag === false) {
             return this.disable();
         }
@@ -40,13 +41,13 @@ class AutoFill {
                 that._attach(that.dom.attachedTo);
             }
         };
-        window.addEventListener('resize', function () {
+        Dom.w.on('resize' + namespace, function () {
             let handle = Dom.s('div.dtaf-handle');
             if (handle.count() > 0 && that.dom.attachedTo) {
                 that._attach(that.dom.attachedTo);
             }
         });
-        window.addEventListener('orientationchange', function () {
+        Dom.w.on('orientationchange' + namespace, function () {
             setTimeout(function () {
                 orientationReset();
                 setTimeout(orientationReset, 150);
@@ -87,14 +88,12 @@ class AutoFill {
         this.dom = {
             attachedTo: null,
             container: Dom.c('div').classAdd('dtaf-container'),
-            closeButton: Dom
-                .c('button')
+            closeButton: Dom.c('button')
                 .classAdd(AutoFill.classes.close)
                 .html('&times;'),
             dtScroll: null,
             handle: Dom.c('div').classAdd('dtaf-handle'),
-            list: Dom
-                .c('div')
+            list: Dom.c('div')
                 .classAdd('dtaf-list')
                 .html(this.s.dt.i18n('autoFill.info', ''))
                 .attr('aria-modal', true)
@@ -120,12 +119,9 @@ class AutoFill {
      * Initialise the RowReorder instance
      */
     _init() {
-        let that = this;
         let dt = this.s.dt;
         // Need to account for scrolling as it has a different DOM structure
-        let dtScroll = Dom
-            .s(this.s.dt.table().container())
-            .find('div.dt-scroll-body');
+        let dtScroll = Dom.s(this.s.dt.table().container()).find('div.dt-scroll-body');
         // Make the instance accessible to the API
         dt.settings()[0].autoFill = this;
         if (dtScroll.count()) {
@@ -138,8 +134,9 @@ class AutoFill {
         if (this.c.enable !== false) {
             this.enable();
         }
-        dt.on('destroy.autoFill', function () {
-            that._focusListenerRemove();
+        dt.on('destroy.autoFill', () => {
+            this._focusListenerRemove();
+            this.dom.handle.off();
         });
     }
     /**
@@ -211,12 +208,10 @@ class AutoFill {
             available.push('cancel');
             for (let i = 0; i < available.length; i++) {
                 let name = available[i];
-                list.append(Dom
-                    .c('button')
+                list.append(Dom.c('button')
                     .classAdd(AutoFill.classes.btn)
                     .html(actions[name].option(dt, cells))
-                    .append(Dom
-                    .c('span')
+                    .append(Dom.c('span')
                     .classAdd('dtaf-button')
                     .html(dt.i18n('autoFill.button', '')))
                     .on('click', function (e) {
@@ -439,11 +434,16 @@ class AutoFill {
             });
         }
     }
+    /**
+     * Clean up the event listeners
+     */
     _focusListenerRemove() {
-        var dt = this.s.dt;
+        let namespace = this.s.namespace;
+        let dt = this.s.dt;
         dt.off('.autoFill');
-        Dom.s(dt.table().body()).off(this.s.namespace);
-        Dom.s(document.body).off(this.s.namespace);
+        Dom.s(dt.table().body()).off(namespace);
+        Dom.s(document.body).off(namespace);
+        Dom.w.off(namespace);
     }
     /**
      * Get the position of a node, relative to another, including any scrolling
