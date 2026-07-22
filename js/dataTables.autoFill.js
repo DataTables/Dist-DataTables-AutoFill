@@ -1,4 +1,4 @@
-/*! AutoFill 3.0.0-beta.1 for DataTables
+/*! AutoFill 3.0.0 for DataTables
  * Copyright (c) SpryMedia Ltd - datatables.net/license
  */
 
@@ -939,7 +939,7 @@ AutoFill.defaults = {
     horizontal: true
 };
 /** AutoFill version */
-AutoFill.version = '3.0.0-beta.1';
+AutoFill.version = '3.0.0';
 
 // Doesn't do anything - Not documented
 Api.register('autoFill()', function () {
