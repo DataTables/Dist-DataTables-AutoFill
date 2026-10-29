@@ -10,13 +10,6 @@
 		});
 	}
 	else if (typeof exports === 'object') {
-		// CommonJS
-		var cjsRequires = function (root) {
-			if (! root.DataTable) {
-				require('datatables.net')(root);
-			}
-		};
-
 		if (typeof window === 'undefined') {
 			module.exports = function (root) {
 				if (! root) {
@@ -24,14 +17,20 @@
 					// root. This will give an error otherwise
 					root = window;
 				}
+				
+				var DataTable = root.DataTable ?
+					root.DataTable :
+					require('datatables.net')(root);
 
-				cjsRequires(root);
-				return factory(root, root.document, root.DataTable);
+				return factory(root, root.document, DataTable);
 			};
 		}
 		else {
-			cjsRequires(window);
-			module.exports = factory(window, window.document, window.DataTable);
+			var DataTable = window.DataTable ?
+				window.DataTable :
+				require('datatables.net');
+
+			module.exports = factory(window, window.document, DataTable);
 		}
 	}
 	else {
@@ -312,7 +311,9 @@ class AutoFill {
             column: this.c.horizontal ? Dom.s(target).index() : start.column
         };
         var colIndx = dt.column.index('toData', end.column);
-        var endRow = dt.row(':eq(' + end.row + ')', { page: 'current' }); // Workaround for M581
+        var endRow = dt.row(':eq(' + (end.row >= 0 ? end.row : 0) + ')', {
+            page: 'current'
+        }); // Workaround for M581
         var endCell = Dom.s(dt.cell(endRow.index(), colIndx).node());
         // Be sure that is a DataTables controlled cell
         if (!dt.cell(endCell.get(0)).any()) {
